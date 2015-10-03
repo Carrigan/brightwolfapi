@@ -1,0 +1,34 @@
+<head>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="/brightwolf.js"></script>
+<script>
+var api = null;
+
+function poller() {
+	if(api) {
+		// This function will retrieve your 
+		api.get_sensor(function(data) {
+			// Check if data is null. If it is, the call failed.
+			if(data) {			
+				// You will have access to the data here
+				// It will be in the format shown in page 32 of the
+				// BrightWolf API specifications. Here, we grab the
+				// info from analog_channel_1 and display it.
+				$("#mydata").text(data["analog_channel_1"]);
+				setTimeout(poller, 5000);
+			} else {
+				alert("Get sensor data failed!");
+			}
+		});
+	}
+}
+
+api = new brightwolfapi("USERNAME HERE", "PASSWORD HERE", function() {
+	setTimeout(poller, 1000);
+});
+
+</script>
+</head>
+<body>
+<div id="mydata"></div>
+</body>
