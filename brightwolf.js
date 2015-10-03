@@ -1,21 +1,3 @@
-function generic_get(url, auth, p_success, p_failure) {
-	$.ajax ({
-		type: "GET",
-		url: url,
-		headers: {
-			"Authorization": "Basic " + btoa(auth)
-		},
-		success: function(data) {
-			if (p_success)
-				p_success(data); 
-		},
-		error: function() {
-			if (p_failure)
-				p_failure();
-		}
-	});			
-}
-
 var brightwolfapi = function(username, password, when_done) {
 	this.auth_str = username + ":" + password;
 	this.sensors = [];
@@ -56,16 +38,19 @@ brightwolfapi.prototype.get_sensor = function(callback, index) {
 	if(index == null)
 		index = 0;
 
-	generic_get(
-		this.sensors[index].selfLink,
-		this.auth_str,
-		function(data) {
-			if(callback)
-				callback(data["sensor_reading"]);
+	$.ajax ({
+		type: "GET",
+		url: this.sensors[index].selfLink,
+		headers: {
+			"Authorization": "Basic " + btoa(this.auth_str)
 		},
-		function() {
-			if(callback)
+		success: function(data) {
+			if (callback)
+				callback(data["sensor_reading"]); 
+		},
+		error: function() {
+			if (callback)
 				callback(null);
 		}
-	);
+	});	
 };
